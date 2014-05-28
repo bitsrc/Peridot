@@ -7,7 +7,7 @@
         <title>Redirect</title>
     </head>
     <body>
-        <p>Redirecting to <?=$url?></p>
+        <p>Redirecting to <a href="<?=$url?>"><?=$url?></a></p>
     </body>
 
 </html>
