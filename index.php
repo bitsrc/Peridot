@@ -46,7 +46,7 @@ function createRandomIdentifier($length) {
 function getUrlData($db,$ident) {
     $stmt = $db->prepare("SELECT ident, url, hits, added, name
                             FROM redirect
-                            INNER JOIN users ON redirect.userID = user.id
+                            INNER JOIN user ON redirect.userID = user.id
                             WHERE redirect.ident = ?");
     $stmt->execute(array($ident));
     
@@ -68,7 +68,7 @@ function getIdentByURL($db,$url) {
 function createUser($db,$name) {
     $apiKey = createRandomIdentifier(APIKEY_LENGTH);
     
-    $stmt = $db->prepare("INSERT INTO users (name,apikey) VALUES (?, ?)");
+    $stmt = $db->prepare("INSERT INTO user (name,apikey) VALUES (?, ?)");
     try {
         $stmt->execute(array($name,$apiKey));
         return true;
@@ -91,7 +91,7 @@ function updateUserApiKey($db,$user) {
 }
 
 function getUserFromKey($db,$key) {
-    $stmt = $db->prepare("SELECT id,name FROM users WHERE apikey = ?");
+    $stmt = $db->prepare("SELECT id,name FROM user WHERE apikey = ?");
     $stmt->execute(array($key));
     
     if ($stmt->rowCount() > 0) {
@@ -126,7 +126,5 @@ if (isset($_GET['id'])) {
           
     }
 }
-
-
 
 ?>
