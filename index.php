@@ -112,7 +112,7 @@ if (isset($_GET['id'])) {
     //Creating redirect
     
     if (isset($_POST['key'])) {
-        if (($user = getUserFromKey($db,$_POST['key'])) {
+        if (($user = getUserFromKey($db,$_POST['key']))) {
             createShort($db,$_POST['url'],$user['id']);
         } else {
             //Invalid key
