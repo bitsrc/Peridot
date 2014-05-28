@@ -12,6 +12,9 @@ function createShort($db,$dest,$user = NULL) {
         $ident = createRandomIdentifier(IDENT_LENGTH);
     } while (!checkIdentifier($db,$ident));
     
+    //Should probably clean the URL somehow
+    //$dest = 
+    
     //Insert the redirect
     $stmt = $db->prepare("INSERT INTO redirect (ident, url, added, userID) VALUES (?, ?, NOW(), ?)");
     $stmt->execute(array($ident,$dest,$user));
@@ -44,10 +47,7 @@ function createRandomIdentifier($length) {
 }
 
 function getUrlData($db,$ident) {
-    $stmt = $db->prepare("SELECT ident, url, hits, added, name
-                            FROM redirect
-                            INNER JOIN user ON redirect.userID = user.id
-                            WHERE redirect.ident = ?");
+    $stmt = $db->prepare("SELECT ident, url, hits, added FROM redirect WHERE redirect.ident = ?");
     $stmt->execute(array($ident));
     
     try {
@@ -103,8 +103,16 @@ function getUserFromKey($db,$key) {
 
 if (isset($_GET['id'])) {
     //redirect
-    $data = getUrlData($db,$_GET['id']);
-    http_redirect($data['url']);
+    if (($data = getUrlData($db,$_GET['id']))) {
+    
+        header("HTTP/1.1 301 Moved Permanently"); 
+        header("Location: {$data['url']}");
+        
+        $redirect = true;
+    } else {
+        //No such ident
+        echo "No ident matches";
+    }
 } elseif (isset($_POST['name'])) {
     //Creating user
     createUser($db,$_POST['name']);
