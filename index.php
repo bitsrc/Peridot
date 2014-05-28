@@ -101,6 +101,12 @@ function getUserFromKey($db,$key) {
     return false;
 }
 
+function displayView($file, $vars = array()) {
+    extract($vars);
+    
+    include $file;
+}
+
 if (isset($_GET['id'])) {
     //redirect
     if (($data = getUrlData($db,$_GET['id']))) {
@@ -108,7 +114,7 @@ if (isset($_GET['id'])) {
         header("HTTP/1.1 301 Moved Permanently"); 
         header("Location: {$data['url']}");
         
-        $redirect = true;
+        displayView('redirect.php',$data);
     } else {
         //No such ident
         echo "No ident matches";
