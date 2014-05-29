@@ -123,16 +123,23 @@ function displayView($file, $vars = array()) {
     include $file;
 }
 
+function displayError($error) {
+    displayView('views/error.php',array('error' = > $error));
+}
+
 if (isset($_GET['id'])) {
     //redirect or preview
     if (($data = getUrlData($db,$_GET['id']))) {
     
         if (isset($_GET['preview'])) {
             //Preview
+            
+            //If there is a user provided, display username
             if ($data['userID'] != NULL) {
                 $user = getUserById($db, $data['userID']);
                 $data['name'] = $user['name'];
             } else {
+                //Else use a placeholder
                 $data['name'] = 'Anonymous Coward';
             }
             
@@ -148,7 +155,7 @@ if (isset($_GET['id'])) {
         }
     } else {
         //No such ident
-        echo "No ident matches";
+        displayError("Non-existent identifier.");
     }
 } elseif (isset($_POST['name'])) {
     //Creating user
@@ -161,14 +168,14 @@ if (isset($_GET['id'])) {
             createShort($db,$_POST['url'],$user['id']);
         } else {
             //Invalid key
-            
+            displayError("Invalid API key");
         }
     } elseif (ALLOW_PUBLIC) {
         //Anonymous redirect
         createShort($db,$_POST['url']);
     } else {
         //No key given, and not public
-          
+        displayError("No API key was provided, and anonymous redirect creation is disabled.");
     }
 }
 
