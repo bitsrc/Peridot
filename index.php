@@ -136,13 +136,13 @@ if (isset($_GET['id'])) {
                 $data['name'] = 'Anonymous Coward';
             }
             
-            displayView('splash.php',$data);
+            displayView('views/preview.php',$data);
         } else {
             //Redirect
             header("HTTP/1.1 301 Moved Permanently"); 
             header("Location: {$data['url']}");
             
-            displayView('redirect.php',$data);
+            displayView('views/redirect.php',$data);
             
             incrementRedirectHits($db,$data['ident']);
         }
