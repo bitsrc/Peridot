@@ -65,6 +65,11 @@ function getIdentByURL($db,$url) {
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+function incrementRedirectHits($db,$ident) {
+    $stmt = $db->prepare("UPDATE redirect SET hits = hits + 1 WHERE ident = ?");
+    $stmt->execute(array($ident));
+}
+
 function createUser($db,$name) {
     $apiKey = createRandomIdentifier(APIKEY_LENGTH);
     
@@ -138,6 +143,8 @@ if (isset($_GET['id'])) {
             header("Location: {$data['url']}");
             
             displayView('redirect.php',$data);
+            
+            incrementRedirectHits($db,$data['ident']);
         }
     } else {
         //No such ident
