@@ -47,7 +47,7 @@ function createRandomIdentifier($length) {
 }
 
 function getUrlData($db,$ident) {
-    $stmt = $db->prepare("SELECT ident, url, hits, added FROM redirect WHERE redirect.ident = ?");
+    $stmt = $db->prepare("SELECT ident, url, hits, added, userID FROM redirect WHERE redirect.ident = ?");
     $stmt->execute(array($ident));
     
     try {
@@ -90,9 +90,20 @@ function updateUserApiKey($db,$user) {
 
 }
 
-function getUserFromKey($db,$key) {
+function getUserByKey($db,$key) {
     $stmt = $db->prepare("SELECT id,name FROM user WHERE apikey = ?");
     $stmt->execute(array($key));
+    
+    if ($stmt->rowCount() > 0) {
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    return false;
+}
+
+function getUserById($db,$id) {
+    $stmt = $db->prepare("SELECT id,name FROM user WHERE id = ?");
+    $stmt->execute(array($id));
     
     if ($stmt->rowCount() > 0) {
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -108,13 +119,26 @@ function displayView($file, $vars = array()) {
 }
 
 if (isset($_GET['id'])) {
-    //redirect
+    //redirect or preview
     if (($data = getUrlData($db,$_GET['id']))) {
     
-        header("HTTP/1.1 301 Moved Permanently"); 
-        header("Location: {$data['url']}");
-        
-        displayView('redirect.php',$data);
+        if (isset($_GET['preview'])) {
+            //Preview
+            if ($data['userID'] != NULL) {
+                $user = getUserById($db, $data['userID']);
+                $data['name'] = $user['name'];
+            } else {
+                $data['name'] = 'Anonymous Coward';
+            }
+            
+            displayView('splash.php',$data);
+        } else {
+            //Redirect
+            header("HTTP/1.1 301 Moved Permanently"); 
+            header("Location: {$data['url']}");
+            
+            displayView('redirect.php',$data);
+        }
     } else {
         //No such ident
         echo "No ident matches";
@@ -126,7 +150,7 @@ if (isset($_GET['id'])) {
     //Creating redirect
     
     if (isset($_POST['key'])) {
-        if (($user = getUserFromKey($db,$_POST['key']))) {
+        if (($user = getUserByKey($db,$_POST['key']))) {
             createShort($db,$_POST['url'],$user['id']);
         } else {
             //Invalid key
