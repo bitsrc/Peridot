@@ -6,7 +6,7 @@
         <title>Error</title>
     </head>
     <body>
-        <p>Error: $error</p>
+        <p>Error: <?=$error?></p>
     </body>
 
 </html>
