@@ -10,18 +10,21 @@ class Peridot {
     }
 
     function createShort($dest,$user = NULL) {
-
-        //Get a unique random identifier, create and then check to make sure it doesn't exist.
-        do {
-            $ident = createRandomIdentifier(IDENT_LENGTH);
-        } while (!checkIdentifier($ident));
-        
-        //Should probably clean the URL somehow
-        //$dest = 
-        
-        //Insert the redirect
-        $stmt = $this->db->prepare("INSERT INTO redirect (ident, url, added, userID) VALUES (?, ?, NOW(), ?)");
-        $stmt->execute(array($ident,$dest,$user));
+        //Check for existing redirect to this URL
+        if (!($ident = $this->getIdentByUrl($dest))) {
+            //Get a unique random identifier, create and then check to make sure it doesn't exist.
+            do {
+                $ident = $this->createRandomIdentifier(IDENT_LENGTH);
+            } while (!$this->checkIdentifier($ident));
+            
+            //Should probably clean the URL somehow
+            //$dest = 
+            
+            //Insert the redirect
+            $stmt = $this->db->prepare("INSERT INTO redirect (ident, url, added, userID) VALUES (?, ?, NOW(), ?)");
+            $stmt->execute(array($ident,$dest,$user));
+        }
+        return $ident;
     }
 
     function checkIdentifier($ident) {
@@ -65,8 +68,13 @@ class Peridot {
         $stmt = $this->db->prepare("SELECT ident FROM redirect WHERE url = ?");
         
         $stmt->execute(array($url));
-                
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($stmt->rowCount() > 0) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row['ident'];
+        }
+        
+        return false;
     }
 
     function incrementRedirectHits($ident) {
@@ -75,7 +83,7 @@ class Peridot {
     }
 
     function createUser($name) {
-        $apiKey = createRandomIdentifier(APIKEY_LENGTH);
+        $apiKey = $this->createRandomIdentifier(APIKEY_LENGTH);
         
         $stmt = $this->db->prepare("INSERT INTO user (name,apikey) VALUES (?, ?)");
         try {
@@ -87,7 +95,7 @@ class Peridot {
     }
 
     function updateUserApiKey($user) {
-        $apiKey = createRandomIdentifier(APIKEY_LENGTH);
+        $apiKey = $this->createRandomIdentifier(APIKEY_LENGTH);
         
         $stmt = $this->db->prepare("UPDATE users SET apikey = ? WHERE id = ?");
         try {

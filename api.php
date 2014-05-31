@@ -22,7 +22,9 @@ if (isset($_GET['action'])) {
     
         if ($action == "createShort") {
             if (isset($_POST['url'])) {
-                $p->createShort($_POST['url'],$user['id']);
+                $ident = $p->createShort($_POST['url'],$user['id']);
+                
+                outputResult(array('ident' => $ident));
             } else {
                 outputError("Malformed request");
             }
