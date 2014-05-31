@@ -15,7 +15,7 @@ class Peridot {
             //Get a unique random identifier, create and then check to make sure it doesn't exist.
             do {
                 $ident = $this->createRandomIdentifier(IDENT_LENGTH);
-            } while (!$this->checkIdentifier($ident));
+            } while ($this->checkIdentifier($ident));
             
             //Should probably clean the URL somehow
             //$dest = 
@@ -132,10 +132,14 @@ class Peridot {
 }
 
 
-function displayView($file, $vars = array()) {
+function displayView($file, $vars = array(), $wrapper = true) {
     extract($vars);
     
+    if ($wrapper) include 'views/header.php';
+    
     include $file;
+    
+    if ($wrapper) include 'views/footer.php';
 }
 
 function displayError($error) {

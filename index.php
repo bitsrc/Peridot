@@ -28,7 +28,7 @@ if (isset($_GET['id'])) {
             header("HTTP/1.1 301 Moved Permanently"); 
             header("Location: {$data['url']}");
             
-            displayView('views/redirect.php',$data);
+            displayView('views/redirect.php',$data, false);
             
             $p->incrementRedirectHits($data['ident']);
         }
@@ -56,6 +56,8 @@ if (isset($_GET['id'])) {
         //No key given, and not public
         displayError("No API key was provided, and anonymous redirect creation is disabled.");
     }
+} else {
+    displayView('views/create.php');
 }
 
 ?>
