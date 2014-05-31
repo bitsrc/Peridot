@@ -16,6 +16,18 @@ $p = new Peridot();
 if (isset($_GET['action'])) {
     $action = $_GET['action'];
     
+    if ($action == "redirectInfo") {
+        if (isset($_GET['id'])) {
+            if (($data = $p->getUrlData($_GET['id']))) {
+                outputResult($data);
+            }
+        } else {
+            outputError("Malformed request");
+        }
+    } else {
+        outputError("Invalid action");
+    }
+    
 } elseif ((isset($_POST['action'])) && (isset($_POST['key']))) {
     if (($user = $p->getUserByKey($_POST['key']))) {        
         $action = $_POST['action'];
@@ -28,6 +40,8 @@ if (isset($_GET['action'])) {
             } else {
                 outputError("Malformed request");
             }
+        } else {
+            outputError("Invalid action");
         }
     } else {
         //Invalid key
