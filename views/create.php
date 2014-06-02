@@ -1,3 +1,9 @@
+<?php if (isset($ident)): ?>
+<div class="alert alert-success">
+  <p><strong>Shortened URL created!</strong> Your new URL is: <?=SITE_ROOT?><?=$ident?></p>
+</div>
+<?php endif; ?>
+
 <form method="post" action="index.php" class="form-horizontal" role="form" name="form">
     <div class="form-group">
         <label for="url" class="col-sm-2 control-label">URL</label>

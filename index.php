@@ -34,24 +34,26 @@ if (isset($_GET['id'])) {
         }
     } else {
         //No such ident
-        displayError("Non-existent identifier.");
+        displayError("Non-existent identifier. ({$_GET['id']})");
     }
 } elseif (isset($_POST['name'])) {
     //Creating user
     $p->createUser($_POST['name']);
 } elseif (isset($_POST['url'])) {
     //Creating redirect
-    
+    $data = array();
     if (isset($_POST['key'])) {
         if (($user = $p->getUserByKey($_POST['key']))) {
-            $p->createShort($_POST['url'],$user['id']);
+            $data['ident'] = $p->createShort($_POST['url'],$user['id']);
+            displayView('views/create.php',$data);
         } else {
             //Invalid key
             displayError("Invalid API key");
         }
     } elseif (ALLOW_PUBLIC) {
         //Anonymous redirect
-        $p->createShort($_POST['url']);
+        $data['ident'] = $p->createShort($_POST['url']);
+        displayView('views/create.php',$data);
     } else {
         //No key given, and not public
         displayError("No API key was provided, and anonymous redirect creation is disabled.");
