@@ -42,7 +42,7 @@ class Peridot {
 
     function createRandomIdentifier($length) {
         //List of possible characters to use in an ident, removed i, l, I, and L, along with O and 0 to attempt to prevent typos
-        $chars = 'abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ1234567890';
+        $chars = 'abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789';
         $ident = '';
         
         //Select a random character from the string and append
