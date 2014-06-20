@@ -18,7 +18,11 @@ class Peridot {
             } while ($this->checkIdentifier($ident));
             
             //Should probably clean the URL somehow
-            //$dest = 
+            $dest = filter_var($dest, FILTER_SANITIZE_URL);
+            
+            if (!filter_var($dest, FILTER_VALIDATE_URL)) {
+                return false;
+            }
             
             //Insert the redirect
             $stmt = $this->db->prepare("INSERT INTO redirect (ident, url, added, userID) VALUES (?, ?, NOW(), ?)");

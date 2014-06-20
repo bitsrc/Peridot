@@ -35,8 +35,11 @@ if (isset($_GET['action'])) {
         if ($action == "createShort") {
             if (isset($_POST['url'])) {
                 $ident = $p->createShort($_POST['url'],$user['id']);
-                
-                outputResult(array('ident' => $ident));
+                if ($ident) {
+                    outputResult(array('ident' => $ident));
+                } else {
+                    outputError("Malformed URI");
+                }
             } else {
                 outputError("Malformed request");
             }

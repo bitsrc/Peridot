@@ -45,7 +45,11 @@ if (isset($_GET['id'])) {
     if (isset($_POST['key'])) {
         if (($user = $p->getUserByKey($_POST['key']))) {
             $data['ident'] = $p->createShort($_POST['url'],$user['id']);
-            displayView('views/create.php',$data);
+            if ($data['ident']) {
+                displayView('views/create.php',$data);
+            } else {
+                displayError("Malformed URI");
+            }
         } else {
             //Invalid key
             displayError("Invalid API key");
@@ -53,7 +57,11 @@ if (isset($_GET['id'])) {
     } elseif (ALLOW_PUBLIC) {
         //Anonymous redirect
         $data['ident'] = $p->createShort($_POST['url']);
-        displayView('views/create.php',$data);
+        if ($data['ident']) {
+            displayView('views/create.php',$data);
+        } else {
+            displayError("Malformed URI");
+        }
     } else {
         //No key given, and not public
         displayError("No API key was provided, and anonymous redirect creation is disabled.");
