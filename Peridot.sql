@@ -5,7 +5,7 @@
 
 -- Dumping structure for table peridot.redirect
 CREATE TABLE IF NOT EXISTS `redirect` (
-  `ident` varchar(5) NOT NULL,
+  `ident` varchar(5) NOT NULL COLLATION latin1_general_cs,
   `url` tinytext NOT NULL,
   `hits` int(10) unsigned NOT NULL DEFAULT '0',
   `added` datetime NOT NULL,
